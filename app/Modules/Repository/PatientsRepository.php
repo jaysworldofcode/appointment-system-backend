@@ -3,6 +3,7 @@
 
 namespace App\Modules\Repository;
 
+use App\Exceptions\NoDataException;
 use App\Modules\Entity\Patient;
 use App\Modules\Interfaces\IPatientsRepository;
 use App\Models\Patient as PatientModel;
@@ -18,17 +19,17 @@ class PatientsRepository implements IPatientsRepository
 
     public function show(int $id) : Patient
     {
-        $test = new Patient();
+        $user = $this->currentUser();
 
-        $test->id = 1;
-        $test->firstname = 'Test';
-        $test->lastname = 'Test';
-        $test->email = 'tester@gmail.com';
-        $test->phone_number = '1234';
-        $test->status_id = 1;
-        $test->user_id = 1;
+        $results = PatientModel::where('id', '=', $id)
+            ->where('owner_id', '=', $user['id'])
+            ->get();
 
-        return $test;
+        if(count($results) != 0){
+            return Patient::modelToEntity($results[0]);
+        }
+
+        throw new NoDataException('Patients not found');
     }
 
     public function delete(int $id) : bool
@@ -38,7 +39,7 @@ class PatientsRepository implements IPatientsRepository
 
     public function store(Request $request) : Patient
     {
-        $user = JWTAuth::user();
+        $user = $this->currentUser();
         $patient = PatientModel::create(
             array_merge(
                 $request->all(),
@@ -49,5 +50,9 @@ class PatientsRepository implements IPatientsRepository
         return Patient::modelToEntity(
             $patient
         );
+    }
+
+    public function currentUser(){
+        return JWTAuth::user();
     }
 }

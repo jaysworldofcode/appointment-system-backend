@@ -11,4 +11,5 @@ interface IPatientsRepository
     public function show(int $id) : Patient;
     public function delete(int $id) : bool;
     public function store(Request $request) : Patient;
+    public function currentUser();
 }

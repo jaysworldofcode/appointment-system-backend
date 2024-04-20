@@ -6,6 +6,7 @@ namespace App\Modules\Interactors;
 use App\Modules\Entity\Patient;
 use App\Modules\Interfaces\IPatientsInteractor;
 use App\Modules\Interfaces\IPatientsRepository;
+use Illuminate\Http\Request;
 
 class PatientsInteractor implements IPatientsInteractor
 {
@@ -19,9 +20,9 @@ class PatientsInteractor implements IPatientsInteractor
         return $this->patients_repository->show($id);
     }
 
-    public function savePatient($patient) : Patient{
+    public function savePatient(Request $request) : Patient{
         return $this->patients_repository->store(
-            $patient
+            $request
         );
     }
 }
