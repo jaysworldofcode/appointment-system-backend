@@ -50,4 +50,42 @@ class AppointmentsRepository implements IAppointmentsRepository
             $appointment
         );
     }
+
+    public function filter($filter, $user_id) : array{
+        $results = AppointmentsModel::where(function ($query) use ($user_id) {
+            if(request()->has('from') && request()->has('to') && request()->query('from') && request()->query('to')){
+                $query->whereBetween('schedule_datetime', [
+                    request()->query('from'),
+                    request()->query('to')
+                ]);
+            }
+
+            if(request()->has('date_created_from') && request()->has('date_created_to') && request()->query('date_created_from') && request()->query('date_created_to')){
+                $query->whereBetween('created_at', [
+                    request()->query('date_created_from'),
+                    request()->query('date_created_to')
+                ]);
+            }
+
+            if(request()->has('status_id') && request()->query('status_id')){
+                $query->where('status_id', '=', request()->query('status_id'));
+            }
+
+            if(request()->has('patients_id') && request()->query('patients_id')){
+                $query->where('patients_id', '=', request()->query('patients_id'));
+            }
+
+            if(request()->has('notes') && request()->query('notes')){
+                $query->where('notes', 'like', '%' . request()->query('notes') . '%');
+            }
+
+            $query->where('user_id', '=', $user_id);
+        })
+        ->with(['patient', 'status'])
+        ->orderBy('schedule_datetime')
+        ->get()
+        ->toArray();
+
+        return Appointments::hydrate($results)->toArray();
+    }
 }

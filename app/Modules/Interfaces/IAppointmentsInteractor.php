@@ -12,4 +12,5 @@ interface IAppointmentsInteractor
     public function saveAppointment(array $data, int $user_id) : Appointments;
 
     public function updateAppointment(array $data, int $user_id) : Appointments;
+    public function filterAppointments(array $filter, int $user_id) : array;
 }

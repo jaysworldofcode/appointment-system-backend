@@ -27,4 +27,8 @@ class AppointmentsInteractor implements IAppointmentsInteractor
     public function updateAppointment(array $data, int $user_id) : Appointments{
         return $this->appointments_repository->update($data, $user_id);
     }
+
+    public function filterAppointments(array $filter, int $user_id) : array{
+        return $this->appointments_repository->filter($filter, $user_id);
+    }
 }

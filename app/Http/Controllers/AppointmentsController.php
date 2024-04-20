@@ -32,13 +32,25 @@ class AppointmentsController extends Controller
     }
 
     public function show($id){
-        $patient = $this->appointments_interactor->getAppointment(
+        $appointment = $this->appointments_interactor->getAppointment(
             $id,
             $this->currentUser()['id']
         );
 
         return response(
-            $patient->getJSON(),
+            $appointment->getJSON(),
+            200
+        );
+    }
+
+    public function filter(Request $request){
+        $appointment = $this->appointments_interactor->filterAppointments(
+            $request->all(),
+            $this->currentUser()['id']
+        );
+
+        return response(
+            $appointment,
             200
         );
     }
