@@ -13,9 +13,11 @@ class Appointments extends Model
     public $notes;
     public $created_at;
     public $updated_at;
+    public $patient;
+    public $status;
 
     public function getJSON(){
-        return array(
+        $json = array(
             "id"                    => $this->id,
             "token"                 => $this->token,
             "patients_id"           => $this->patients_id,
@@ -24,7 +26,11 @@ class Appointments extends Model
             "notes"                 => $this->notes,
             "created_at"            => $this->created_at,
             "updated_at"            => $this->updated_at,
+            "patient"               => $this->patient,
+            "status"                => $this->status
         );
+
+        return $json;
     }
 
     public static function modelToEntity(Model $model) : Appointments{
@@ -37,6 +43,14 @@ class Appointments extends Model
         $entity->notes                  = $model->notes;
         $entity->created_at             = $model->created_at;
         $entity->updated_at             = $model->updated_at;
+
+        if(isset($model->patient)){
+            $entity->patient = $model->patient;
+        }
+
+        if(isset($model->patient)){
+            $entity->status = $model->status;
+        }
 
         return $entity;
     }

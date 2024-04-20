@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PatientsController;
+use App\Http\Controllers\AppointmentsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +41,9 @@ Route::prefix('patients')->middleware('auth:api')->group(function () {
     Route::post('/', [PatientsController::class, 'store']);
     Route::put('/{id}/{status_id}', [PatientsController::class, 'setStatus']);
     Route::put('/', [PatientsController::class, 'update']);
+});
+
+Route::prefix('appointments')->middleware('auth:api')->group(function () {
+    Route::post('/', [AppointmentsController::class, 'store']);
+    Route::get('/{id}', [AppointmentsController::class, 'show']);
 });
