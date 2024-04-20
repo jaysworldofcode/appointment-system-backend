@@ -8,7 +8,7 @@ use App\Modules\Entity\Patient;
 use App\Modules\Interfaces\IPatientsRepository;
 use App\Models\Patient as PatientModel;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\DB;
 
 class PatientsRepository implements IPatientsRepository
 {
@@ -17,33 +17,34 @@ class PatientsRepository implements IPatientsRepository
         return array();
     }
 
-    public function show(int $id) : Patient
+    public function show(int $id, int $user_id) : Patient
     {
-        $user = $this->currentUser();
-
         $results = PatientModel::where('id', '=', $id)
-            ->where('owner_id', '=', $user['id'])
+            ->where('owner_id', '=', $user_id)
             ->get();
 
         if(count($results) != 0){
             return Patient::modelToEntity($results[0]);
         }
 
-        throw new NoDataException('Patients not found');
+        throw new NoDataException('Patient not found');
     }
 
-    public function delete(int $id) : bool
+    public function delete(int $id, int $user_id) : bool
     {
+        # validate if patient exists
+        $this->show($id, $user_id);
+        PatientModel::where('id', $id)->delete();
+
         return true;
     }
 
-    public function store(Request $request) : Patient
+    public function store(Request $request, int $user_id) : Patient
     {
-        $user = $this->currentUser();
         $patient = PatientModel::create(
             array_merge(
                 $request->all(),
-                array('owner_id' => $user['id'])
+                array('owner_id' => $user_id)
             )
         );
 
@@ -52,7 +53,31 @@ class PatientsRepository implements IPatientsRepository
         );
     }
 
-    public function currentUser(){
-        return JWTAuth::user();
+    public function setStatus(int $id, int $status_id, int $user_id) : Patient{
+        # validate if patient exists
+        $find = $this->show($id, $user_id);
+
+        $new_data = array('status_id' => $status_id);
+
+        $patient = PatientModel::whereId($id)
+            ->update($new_data);
+            
+        if($patient){
+            $find->status_id = $status_id;
+        }
+
+        return $find;
+    }
+
+    public function update(array $data, int $user_id) : Patient{
+        # validate if patients exists
+        $this->show($data['id'], $user_id);
+
+        $patient = PatientModel::whereId($data['id'])
+            ->update($data);
+
+        $find = $this->show($data['id'], $user_id);
+
+        return $find;
     }
 }

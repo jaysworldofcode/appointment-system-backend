@@ -36,5 +36,8 @@ Route::group([
 
 Route::prefix('patients')->middleware('auth:api')->group(function () {
     Route::get('/{id}', [PatientsController::class, 'show']);
+    Route::delete('/{id}', [PatientsController::class, 'delete']);
     Route::post('/', [PatientsController::class, 'store']);
+    Route::put('/{id}/{status_id}', [PatientsController::class, 'setStatus']);
+    Route::put('/', [PatientsController::class, 'update']);
 });

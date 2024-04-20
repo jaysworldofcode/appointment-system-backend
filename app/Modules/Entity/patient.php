@@ -3,7 +3,7 @@ namespace App\Modules\Entity;
 
 use App\Models\Patient as Model;
 
-class Patient
+class Patient extends Model
 {
     public $id;
     public $firstname;
