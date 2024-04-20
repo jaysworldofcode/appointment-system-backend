@@ -5,6 +5,9 @@ namespace App\Modules\Repository;
 
 use App\Modules\Entity\Patient;
 use App\Modules\Interfaces\IPatientsRepository;
+use App\Models\Patient as PatientModel;
+use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PatientsRepository implements IPatientsRepository
 {
@@ -33,10 +36,18 @@ class PatientsRepository implements IPatientsRepository
         return true;
     }
 
-    public function store(Patient $patient) : Patient
+    public function store(Request $request) : Patient
     {
-        $product = Clinics::create($request->all());
+        $user = JWTAuth::user();
+        $patient = PatientModel::create(
+            array_merge(
+                $request->all(),
+                array('owner_id' => $user['id'])
+            )
+        );
 
-        return response($product, 200);
+        return Patient::modelToEntity(
+            $patient
+        );
     }
 }

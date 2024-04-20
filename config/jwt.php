@@ -101,8 +101,9 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 60),
-
+    #default env('JWT_TTL', 60), changing the default to null
+    #so it won't expire
+    'ttl' => null, 
     /*
     |--------------------------------------------------------------------------
     | Refresh time to live
@@ -150,7 +151,7 @@ return [
     'required_claims' => [
         'iss',
         'iat',
-        'exp',
+        // 'exp', # remove so token won't expire
         'nbf',
         'sub',
         'jti',

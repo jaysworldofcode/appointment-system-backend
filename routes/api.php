@@ -36,4 +36,5 @@ Route::group([
 
 Route::prefix('patients')->middleware('auth:api')->group(function () {
     Route::get('/{id}', [PatientsController::class, 'show']);
+    Route::post('/', [PatientsController::class, 'store']);
 });

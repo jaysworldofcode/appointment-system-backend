@@ -20,6 +20,8 @@ class PatientsInteractor implements IPatientsInteractor
     }
 
     public function savePatient($patient) : Patient{
-
+        return $this->patients_repository->store(
+            $patient
+        );
     }
 }

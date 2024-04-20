@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Modules\Interactors\PatientsInteractor;
 use App\Modules\Repository\PatientsRepository;
+use App\Http\Requests\NewPatientRequest;
 
 class PatientsController extends Controller
 {
@@ -27,5 +28,30 @@ class PatientsController extends Controller
             $patient->getJSON(),
             200
         );
+    }
+
+    public function store(NewPatientRequest $request){
+        try {
+            $patient = $this->patients_interactor->savePatient(
+                $request
+            );
+
+            return response(
+                $patient->getJSON(),
+                200
+            );
+        } catch (\Exception $e) {
+            if(env('APP_ENV') == 'local'){
+                return response(
+                    $e,
+                    400
+                );
+            }else{
+                return response(
+                    'Failed to add patient, encounter an issue. Please contact administrator!',
+                    400
+                );
+            }
+        }
     }
 }
