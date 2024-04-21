@@ -17,8 +17,6 @@ class AppointmentsStatusRepository implements IAppointmentsStatusRepository
             ->where('user_id', '=', $user_id)
             ->get();
 
-        error_log($results);
-
         if(count($results) != 0){
             return AppointmentsStatus::modelToEntity($results[0]);
         }

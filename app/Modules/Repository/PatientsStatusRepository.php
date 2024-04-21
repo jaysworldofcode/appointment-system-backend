@@ -17,8 +17,6 @@ class PatientsStatusRepository implements IPatientsStatusRepository
             ->where('user_id', '=', $user_id)
             ->get();
 
-        error_log($results);
-
         if(count($results) != 0){
             return PatientsStatus::modelToEntity($results[0]);
         }

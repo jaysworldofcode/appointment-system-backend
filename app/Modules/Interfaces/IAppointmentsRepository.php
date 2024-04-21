@@ -10,4 +10,5 @@ interface IAppointmentsRepository
     public function store(array $data, int $user_id) : Appointments;
     public function update(array $data, int $user_id) : Appointments;
     public function filter(array $filter, int $user_id) : array;
+    public function delete(int $id, int $user_id);
 }

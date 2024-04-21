@@ -29,7 +29,7 @@ class AppointmentsRepository implements IAppointmentsRepository
         # validate if patients exists
         $this->show($data['id'], $user_id);
 
-        $patient = Appointments::whereId($data['id'])
+        AppointmentsModel::whereId($data['id'])
             ->update($data);
 
         $find = $this->show($data['id'], $user_id);
@@ -81,11 +81,25 @@ class AppointmentsRepository implements IAppointmentsRepository
 
             $query->where('user_id', '=', $user_id);
         })
+
         ->with(['patient', 'status'])
         ->orderBy('schedule_datetime')
-        ->get()
+        ->paginate(
+            40,
+            ['*'],
+            'page',
+            request()->has('page')?  request()->query('page'):1
+        )
         ->toArray();
 
         return Appointments::hydrate($results)->toArray();
+    }
+
+    public function delete(int $id, int $user_id){
+        # validate if patient exists
+        $this->show($id, $user_id);
+        AppointmentsModel::where('id', $id)->delete();
+
+        return true;
     }
 }

@@ -4,18 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Modules\Repository\AppointmentsRepository;
+use App\Modules\Repository\AppointmentsStatusRepository;
 use App\Modules\Interactors\AppointmentsInteractor;
 use App\Http\Requests\NewAppointmentRequest;
+use App\Http\Requests\UpdateAppointmentRequest;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AppointmentsController extends Controller
 {
     private $appointments_interactor;
 
-    public function __construct(AppointmentsRepository $appointments_repository)
+    public function __construct(
+        AppointmentsRepository $appointments_repository,
+        AppointmentsStatusRepository $appointment_status_repository)
     {
         $this->appointments_interactor = new AppointmentsInteractor(
-            $appointments_repository
+            $appointments_repository,
+            $appointment_status_repository
         );
     }
 
@@ -51,6 +56,27 @@ class AppointmentsController extends Controller
 
         return response(
             $appointment,
+            200
+        );
+    }
+
+    public function delete($id){
+        $this->appointments_interactor->deleteAppointments(
+            $id,
+            $this->currentUser()['id']
+        );
+
+        return response(['message' => 'Successfuly deleted'], 200);
+    }
+
+    public function update(UpdateAppointmentRequest $request){
+        $appointment = $this->appointments_interactor->updateAppointment(
+            $request->all(),
+            $this->currentUser()['id']
+        );
+
+        return response(
+            $appointment->getJSON(),
             200
         );
     }

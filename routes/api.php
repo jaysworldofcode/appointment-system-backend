@@ -47,4 +47,5 @@ Route::prefix('appointments')->middleware('auth:api')->group(function () {
     Route::post('/', [AppointmentsController::class, 'store']);
     Route::get('/filter', [AppointmentsController::class, 'filter']);
     Route::get('/{id}', [AppointmentsController::class, 'show']);
+    Route::put('/', [AppointmentsController::class, 'update']);
 });
